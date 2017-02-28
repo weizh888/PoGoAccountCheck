@@ -41,15 +41,10 @@ def parse_arguments(args):
 
 
 def check_account(provider, username, password, location, api):
-    auth = provider
     api.set_position(location[0], location[1], 0.0)
 
-    # Double-check.
-    if username.endswith("@gmail.com"):
-        auth = 'google'
-
     try:
-        if not api.login(auth, username, password):
+        if not api.login(provider, username, password):
             __accountFailed(username)
             return
     except BannedAccountException:
