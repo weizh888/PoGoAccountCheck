@@ -4,19 +4,15 @@
 """banned.py - Check multiple PTC accounts ban status with Pokemon Go."""
 
 from pgoapi import PGoApi
-from pgoapi.utilities import f2i
-from pgoapi import utilities as util
-from pgoapi.exceptions import AuthException
 from pgoapi.exceptions import ServerSideRequestThrottlingException
 from pgoapi.exceptions import NotLoggedInException
 from pgoapi.exceptions import BannedAccountException
-import pprint
 import time
-import threading
-import sys, getopt
+import sys
 import os
 import argparse
 import re
+
 
 def parse_arguments(args):
     """Parse the command line arguments for the console commands.
