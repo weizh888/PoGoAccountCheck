@@ -52,12 +52,12 @@ def check_account(username, password, location, api):
 
     try:
         if not api.login(auth, username, password):
-            print ('Failed to login the following account: {}'
-                   + ' (It may have been deleted)').format(username)
-            appendFile(username, "failed.txt")
+            __accountFailed(username)
             return
     except BannedAccountException:
-        pass
+        # Banned :(
+        __accountBanned(username)
+        return
 
     time.sleep(1)
     req = api.create_request()
@@ -67,16 +67,23 @@ def check_account(username, password, location, api):
     # For some reason occasionally api.login lets fake ptc accounts slip
     # through.. this will block em
     if type(response) is NotLoggedInException:
-        print ('Failed to login the following account: {}'
-               + ' (It may have been deleted)').format(username)
-        appendFile(username, "failed.txt")
+        __accountFailed(username)
         return
 
     if response['status_code'] == 3:
-        print('The following account is banned! {}'.format(username))
-        appendFile(username, "banned.txt")
+        __accountBanned(username)
     else:
         print('{} is not banned...'.format(username))
+
+
+def __accountBanned(username):
+    print('Account banned: {}.'.format(username))
+    appendFile(username, 'banned.txt')
+
+
+def __accountFailed(username):
+    print('Failed to login with: {}.'.format(username))
+    appendFile(username, 'failed.txt')
 
 
 def appendFile(username, filename):
@@ -105,7 +112,7 @@ def entry():
         return
 
     if args.hash_key:
-        print "Using hash key: {}".format(args.hash_key)
+        print "Using hash key: {}.".format(args.hash_key)
         api.activate_hash_server(args.hash_key)
 
     if args.csv_file:
