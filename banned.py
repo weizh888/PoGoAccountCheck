@@ -26,7 +26,7 @@ def parse_arguments(args):
     )
     parser.add_argument(
         '-f', '--file', type=str, default=None, required=True,
-        help='File of accounts to check (formatted username:password).'
+        help='File of accounts to check (RocketMap csv format).'
     )
     parser.add_argument(
         '-l', '--location', type=str, default="40.7127837 -74.005941",
@@ -37,16 +37,14 @@ def parse_arguments(args):
         '-hk', '--hash-key', type=str, default=None, required=False,
         help='Key for hash server.'
     )
-    parser.add_argument(
-        '-c', '--csv-file', action='store_true', default=False, required=False,
-        help='Enables PokomenGO Map style csv'
-    )
     return parser.parse_args(args)
 
 
-def check_account(username, password, location, api):
-    auth = 'ptc'
+def check_account(provider, username, password, location, api):
+    auth = provider
     api.set_position(location[0], location[1], 0.0)
+
+    # Double-check.
     if username.endswith("@gmail.com"):
         auth = 'google'
 
@@ -115,24 +113,20 @@ def entry():
         print "Using hash key: {}.".format(args.hash_key)
         api.activate_hash_server(args.hash_key)
 
-    if args.csv_file:
-        with open(str(args.file)) as f:
-            credentials = [x.strip().split(',')[1:] for x in f.readlines()]
-    else:
-        with open(str(args.file)) as f:
-            credentials = [x.strip().split(':') for x in f.readlines()]
+    with open(str(args.file)) as f:
+        credentials = [x.strip().split(',')[0:] for x in f.readlines()]
 
-    for username, password in credentials:
+    for provider, username, password in credentials:
         try:
-            check_account(username, password, position, api)
+            check_account(provider, username, password, position, api)
         except ServerSideRequestThrottlingException:
-            print('Server side throttling, Waiting 10 seconds.')
+            print('Server side throttling, waiting for 10 seconds.')
             time.sleep(10)
-            check_account(username, password, position, api)
+            check_account(provider, username, password, position, api)
         except NotLoggedInException:
-            print('Could not login, Waiting for 10 seconds')
+            print('Could not login, waiting for 10 seconds.')
             time.sleep(10)
-            check_account(username, password, position, api)
+            check_account(provider, username, password, position, api)
 
 
 entry()
