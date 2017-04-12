@@ -65,6 +65,7 @@ def check_account(provider, username, password, location, api):
 
     if response['status_code'] == 3:
         __accountBanned(username)
+        return False
     else:
         print('{} is not banned...'.format(username))
         return True
