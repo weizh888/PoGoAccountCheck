@@ -44,4 +44,4 @@ Your file of accounts should be structured as follows:
 	google,username3,password3
 
 # Output
-The program will display a message in the terminal if the account is banned. Additionally, it will output all banned accounts to a new file named banned.txt
+The program will display a message in the terminal if the account is banned. Additionally, it will output all banned accounts to a new file named banned.txt, all accounts that failed login to failed.txt, and all working accounts to working.csv.
