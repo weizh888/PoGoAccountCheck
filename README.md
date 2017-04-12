@@ -25,13 +25,13 @@ Where accounts.csv is the file of accounts to check. See "Formatting" to see how
 You can also use an additional -l argument which allows you to specify your own location for the program to use.
 ie:
 
-	python banned.py -f accounts.csv -l '40.7127837 -74.005941'
+	python banned.py -f accounts.csv -l "40.7127837 -74.005941"
 
 
-Lastly, we recommend specifying the -hk argument that allows you to use your hash key for the new api (0.53.1), if you have one.
+The -hk argument is also required ever since API 0.45 has stopped working.
 ie.
 
-	python banned.py -f accounts.csv -l '40.7127837 -74.005941' -hk your_hash_key
+	python banned.py -f accounts.csv -l "40.7127837 -74.005941" -hk your_hash_key
 
 
 
