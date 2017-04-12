@@ -34,7 +34,7 @@ def parse_arguments(args):
         help='Location to use when checking if the accounts are banned.'
     )
     parser.add_argument(
-        '-hk', '--hash-key', type=str, default=None, required=False,
+        '-hk', '--hash-key', type=str, default=None, required=True,
         help='Key for hash server.'
     )
     return parser.parse_args(args)
@@ -79,13 +79,13 @@ def __accountFailed(username):
     appendFile(username, 'failed.txt')
 
 
-def appendFile(username, filename):
+def appendFile(text, filename):
     if os.path.exists(filename):
         f = open('./' + filename, 'a+b')
     else:
         f = open('./' + filename, 'w+b')
 
-    f.write("%s\n" % (username))
+    f.write("%s\n" % (text))
 
     f.close()
 
@@ -113,7 +113,10 @@ def entry():
 
     for provider, username, password in credentials:
         try:
-            check_account(provider, username, password, position, api)
+            if check_account(provider, username, password, position, api):
+                # Success!
+                csv_format = provider + ',' + username + ',' + password
+                appendFile(csv_format, 'working.csv')
         except ServerSideRequestThrottlingException:
             print('Server side throttling, waiting for 10 seconds.')
             time.sleep(10)
