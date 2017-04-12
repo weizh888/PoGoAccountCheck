@@ -46,11 +46,11 @@ def check_account(provider, username, password, location, api):
     try:
         if not api.login(provider, username, password):
             __accountFailed(username)
-            return
+            return False
     except BannedAccountException:
         # Banned :(
         __accountBanned(username)
-        return
+        return False
 
     time.sleep(1)
     req = api.create_request()
@@ -61,12 +61,13 @@ def check_account(provider, username, password, location, api):
     # through.. this will block em
     if type(response) is NotLoggedInException:
         __accountFailed(username)
-        return
+        return False
 
     if response['status_code'] == 3:
         __accountBanned(username)
     else:
         print('{} is not banned...'.format(username))
+        return True
 
 
 def __accountBanned(username):
