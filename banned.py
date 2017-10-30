@@ -45,11 +45,11 @@ def check_account(provider, username, password, location, api):
 
     try:
         if not api.login(provider, username, password):
-            __accountFailed(username)
+            __accountFailed(provider, username, password)
             return False
     except BannedAccountException:
         # Banned :(
-        __accountBanned(username)
+        __accountBanned(provider, username, password)
         return False
 
     time.sleep(1)
@@ -60,25 +60,27 @@ def check_account(provider, username, password, location, api):
     # For some reason occasionally api.login lets fake ptc accounts slip
     # through.. this will block em
     if type(response) is NotLoggedInException:
-        __accountFailed(username)
+        __accountFailed(provider, username, password)
         return False
 
     if response['status_code'] == 3:
-        __accountBanned(username)
+        __accountBanned(provider, username, password)
         return False
     else:
         print('{} is not banned...'.format(username))
         return True
 
 
-def __accountBanned(username):
+def __accountBanned(provider, username, password):
     print('Account banned: {}.'.format(username))
-    appendFile(username, 'banned.txt')
+    csv_format = provider + ',' + username + ',' + password
+    appendFile(csv_format, 'banned.csv')
 
 
-def __accountFailed(username):
+def __accountFailed(provider, username, password):
     print('Failed to login with: {}.'.format(username))
-    appendFile(username, 'failed.txt')
+    csv_format = provider + ',' + username + ',' + password
+    appendFile(csv_format, 'failed.csv')
 
 
 def appendFile(text, filename):
